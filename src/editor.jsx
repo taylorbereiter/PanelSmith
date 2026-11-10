@@ -1,7 +1,7 @@
 // The main editor: script on the left, the page in the middle, panel details on the right.
 import { useRef, useEffect, useState } from 'preact/hooks';
 import { S, touch, commit, asset, findPanel, toast } from './store.js';
-import { syncDoc, setPanelSize, renumber, panelCast } from './script.js';
+import { syncDoc, setPanelSize, renumber, panelCast, removePanel } from './script.js';
 import { PageView, PageStatic } from './pageview.jsx';
 import { Btn, Seg, Slider, Modal } from './ui.jsx';
 import { Icon } from './icons.jsx';
@@ -125,6 +125,18 @@ function ScriptPane() {
 export const SIZE_LABELS = { half: 'Half', wide: 'Wide', third: 'Third', big: 'Big', splash: 'Splash' };
 const TYPE_LABELS = { speech: 'Speech', thought: 'Thought', shout: 'Shout', whisper: 'Whisper', caption: 'Caption', sfx: 'SFX' };
 
+/** Delete the selected panel and move the selection to its neighbour. Undo restores it. */
+export function deleteSelectedPanel() {
+  const ui = S.ui, found = ui.panelId ? findPanel(ui.panelId) : null;
+  if (!found) return;
+  if (!removePanel(S.doc, found.panel.id)) return;
+  const left = S.doc.pages[found.pageIdx]?.panels || [];
+  ui.panelId = (left[found.idx] || left[found.idx - 1])?.id || null;
+  ui.bubbleId = null;
+  commit();
+  toast(`Panel ${found.idx + 1} deleted. Undo brings it back.`);
+}
+
 function Inspector({ openPanel }) {
   const doc = S.doc, ui = S.ui;
   const found = ui.panelId ? findPanel(ui.panelId) : null;
@@ -183,6 +195,10 @@ function Inspector({ openPanel }) {
           <Btn kind="sm" icon="refresh" onClick={() => { const b = panel.bubbles[bi]; panel.bubbles[bi] = { id: b.id, auto: true, autoTail: true }; commit(); }}>Reset position</Btn>
         </div>}
         {panel.lines.length > 0 && bi < 0 && <p class="hint" style="margin:8px 0 0">Drag a bubble on the page to move it. Select it to move its tail or change its width.</p>}
+      </div>
+      <div class="sec">
+        <Btn kind="danger block" icon="trash" onClick={deleteSelectedPanel} title="Delete this panel (Delete key)">Delete panel</Btn>
+        <p class="hint" style="margin:8px 0 0">Removes the panel, its lines in the script and its art. Undo brings it back.</p>
       </div>
     </div>
   );
