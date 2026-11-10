@@ -5,7 +5,7 @@ import comicNeue from '@fontsource/comic-neue/files/comic-neue-latin-700-normal.
 import bangers from '@fontsource/bangers/files/bangers-latin-400-normal.woff2';
 import css from './styles.css';
 import { S, subscribe, touch, commit, undo, redo, canUndo, canRedo, boot, flush, newDoc, createProject, switchProject, removeProject, duplicateProject, toast } from './store.js';
-import { Editor } from './editor.jsx';
+import { Editor, deleteSelectedPanel } from './editor.jsx';
 import { Workspace, closeWorkspace, refreshSnapshots } from './workspace.jsx';
 import { Characters } from './characters.jsx';
 import { SettingsModal, StyleModal } from './dialogs.jsx';
@@ -75,6 +75,8 @@ function App() {
       if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
       else if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
       else if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); flush().then(() => toast('Saved')); }
+      else if ((e.key === 'Delete' || e.key === 'Backspace') && !mod && S.ui.view === 'editor' && !S.ui.modal && S.ui.panelId && !S.ui.bubbleId
+        && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable) { e.preventDefault(); deleteSelectedPanel(); }
     };
     window.addEventListener('keydown', k);
     return () => window.removeEventListener('keydown', k);

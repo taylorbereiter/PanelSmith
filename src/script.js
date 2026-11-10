@@ -166,6 +166,27 @@ export function setPanelSize(doc, panel, size) {
   doc.script = rows.join('\n');
 }
 
+/** Delete a panel: its heading and everything under it leave the script, and its art goes with it. */
+export function removePanel(doc, panelId) {
+  const page = doc.pages.find((pg) => pg.panels.some((pn) => pn.id === panelId));
+  if (!page) return false;
+  const idx = page.panels.findIndex((pn) => pn.id === panelId);
+  const rows = doc.script.split('\n');
+  const start = page.panels[idx].line;
+  // The panel's text runs until the next PANEL or PAGE heading, or the end of the script.
+  let end = rows.length;
+  for (let i = start + 1; i < rows.length; i++) {
+    const s = rows[i].trim();
+    if (PAGE_RE.test(s) || PANEL_RE.test(s)) { end = i; break; }
+  }
+  rows.splice(start, end - start);
+  // Drop the panel from the document first so the panels after it keep their own art when positions shift.
+  page.panels.splice(idx, 1);
+  doc.script = renumber(rows.join('\n'));
+  syncDoc(doc);
+  return true;
+}
+
 /** Renumber PAGE and PANEL headings so they always count up from 1. */
 export function renumber(script) {
   let pg = 0, pn = 0;
