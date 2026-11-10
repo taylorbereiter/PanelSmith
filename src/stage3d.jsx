@@ -149,7 +149,8 @@ class Scene3D {
     this.ro.disconnect(); this.renderer.dispose();
   }
   resize() {
-    const r = this.canvas.parentElement.getBoundingClientRect();
+    const par = this.canvas.parentElement; if (!par) return;
+    const r = par.getBoundingClientRect();
     if (!r.width || !r.height) return;
     this.renderer.setSize(r.width, r.height, false);
     this.camera.aspect = r.width / r.height; this.camera.updateProjectionMatrix();
