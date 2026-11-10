@@ -1,0 +1,23 @@
+{
+  "name": "panelsmith",
+  "version": "0.1.0",
+  "description": "A comic book creator for writers: script, stage, stylize, export.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --dev",
+    "start": "node scripts/build.mjs && node scripts/serve.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/bangers": "^5.3.0",
+    "@fontsource/comic-neue": "^5.3.0",
+    "esbuild": "^0.28.2",
+    "jspdf": "^4.2.1",
+    "preact": "^11.2.0",
+    "three": "^0.187.0"
+  },
+  "private": true,
+  "type": "module"
+}
