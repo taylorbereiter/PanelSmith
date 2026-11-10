@@ -20,7 +20,9 @@ with posable figures and props, and an image model turns that set up into finish
 
 ## Running it
 
-Open `dist/index.html` in a browser. That single file is the whole app.
+Use the hosted version at https://taylorbereiter.github.io/PanelSmith/ or open
+`dist/index.html` in a browser. That single file is the whole app. Either way, your comics
+and your API key stay in your own browser.
 
 To build from source:
 
@@ -29,6 +31,9 @@ npm install
 npm run build     # writes dist/index.html
 npm start         # builds, then serves dist/ at http://localhost:5173
 ```
+
+Every push to `main` is built and published to GitHub Pages by
+`.github/workflows/pages.yml`.
 
 ## Image generation
 
